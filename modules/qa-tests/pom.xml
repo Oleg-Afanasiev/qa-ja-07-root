@@ -33,6 +33,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.21.0</version>
                 <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>cfgAP</name>
+                            <value>src/main/resources/automationpractice.properties</value>
+                        </property>
+                    </systemProperties>
                     <suiteXmlFiles>
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
