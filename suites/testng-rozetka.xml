@@ -2,9 +2,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
 <suite name="selenium">
-    <test name="login">
-        <classes>
-            <class name="com.telesens.automationpractice.AuthTests" />
-        </classes>
+    <test name="rozetka">
+        <packages>
+            <package name="com.telesens.rozetka.*" />
+        </packages>
     </test>
 </suite>

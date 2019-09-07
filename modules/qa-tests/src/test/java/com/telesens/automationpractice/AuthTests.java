@@ -3,19 +3,25 @@ package com.telesens.automationpractice;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Ignore;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+import org.testng.annotations.Optional;
 
 import java.io.FileReader;
+import java.nio.charset.Charset;
 import java.time.Duration;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static org.openqa.selenium.support.ui.ExpectedConditions.not;
+import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.testng.Assert.fail;
 
 public class AuthTests {
@@ -23,8 +29,9 @@ public class AuthTests {
     private WebDriver driver;
     private String baseUrl;
 
+    @Parameters({"browser"})
     @BeforeClass(alwaysRun = true)
-    public void setUp() throws Exception {
+    public void setUp(@Optional("chrome") String browser) throws Exception {
         String automationPracticePath = System.getProperty("cfgAP");
         if (automationPracticePath == null)
             automationPracticePath = DEFAULT_PATH;
@@ -36,11 +43,11 @@ public class AuthTests {
         System.setProperty("webdriver.gecko.driver", "d:/distribs/selenium/geckodriver.exe");
 //        driver = new ChromeDriver();
         driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
     }
 
     @Test
-//    @Ignore
     public void testAuthSuccess() throws Exception {
         driver.get(baseUrl);
         driver.findElement(By.linkText("Sign in")).click();
@@ -56,23 +63,23 @@ public class AuthTests {
 //        Assert.assertEquals("", "Oleg....");
     }
 
-    @Test
-    @Ignore
-    public void testAuthErrorMessage() {
+
+    @Test(dataProvider = "authErrorMessageProvider")
+    public void testAuthErrorMessage(String login, String passw, String errMsg) {
         driver.get(baseUrl);
         driver.findElement( By.linkText("Sign in")).click();
         driver.findElement(By.id("email")).click();
         driver.findElement(By.id("email")).clear();
-        driver.findElement(By.id("email")).sendKeys("WrongLogin");
+        driver.findElement(By.id("email")).sendKeys(login);
         driver.findElement(By.id("passwd")).click();
         driver.findElement(By.id("passwd")).clear();
-        driver.findElement(By.id("passwd")).sendKeys("Password");
+        driver.findElement(By.id("passwd")).sendKeys(passw);
         driver.findElement(By.id("SubmitLogin")).click();
         ////*[@id="center_column"]/div[1]/ol/li
         WebElement errorMsg = driver.findElement(By.xpath("//*[@id=\"center_column\"]/div[1]/ol/li"));
         String actualError = errorMsg.getText();
 //        System.out.println(message2);
-        Assert.assertEquals(actualError, "Invalid email address.");
+        Assert.assertEquals(actualError, errMsg);
     }
 
     @Test
@@ -108,8 +115,45 @@ public class AuthTests {
                 .until(rollingComplete);
     }
 
+
+
+    protected boolean waitForJSandJQueryToLoad() {
+
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+
+        // wait for jQuery to load
+        ExpectedCondition<Boolean> jQueryLoad = driver -> {
+            try {
+                return ((Long)((JavascriptExecutor)driver).executeScript("return jQuery.active") == 0);
+            }
+            catch (Exception e) {
+                // no jQuery present
+                return true;
+            }
+        };
+
+        // wait for Javascript to load
+        ExpectedCondition<Boolean> jsLoad = driver -> ((JavascriptExecutor)driver).executeScript("return document.readyState")
+                .toString().equals("complete");
+
+        return wait.until(jQueryLoad) && wait.until(jsLoad);
+    }
+
     @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
         driver.quit();
+    }
+
+    @DataProvider(name="authErrorMessageProvider")
+    public Object[][] authErrorMessageProvider() {
+        return new Object[][]{
+                {"log", "passw", "Invalid email address."}
+        };
+//        List<String[]> parts = new ArrayList<>();
+//            while(hasNext()) {
+//                parts.add(line.split(","));
+//            }
+
+//        return parts.toArray(new Object[0][0]);
     }
 }

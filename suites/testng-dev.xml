@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="selenium">
+    <test name="login-chrome">
+        <classes>
+            <class name="com.telesens.automationpractice.AuthTests" >
+                <methods>
+                    <include name="testAuthSuccess" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
