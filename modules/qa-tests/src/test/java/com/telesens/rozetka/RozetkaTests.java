@@ -1,5 +1,6 @@
 package com.telesens.rozetka;
 
+import com.telesens.framework.test.BaseTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,21 +21,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class RozetkaTests {
+public class RozetkaTests extends BaseTest {
 
     private String baseUrl;
-    private WebDriver driver;
 
     private String mainMenuCSS = "body > app-root > div > div:nth-child(2) > app-rz-main-page > div > aside > main-page-sidebar > sidebar-fat-menu > div > ul > li:nth-child(1) > a";
     private String priceCSS = "div[name='goods_list_container']  div.g-price > div.g-price-uah";
 
     @BeforeClass(alwaysRun = true)
-    public void setUp(@Optional("chrome") String browser) throws Exception {
+    public void setUp() throws Exception {
         baseUrl = "https://rozetka.com.ua/";
-        System.setProperty("webdriver.chrome.driver", "d:/distribs/selenium/chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
     }
 
     @Test
@@ -75,10 +71,5 @@ public class RozetkaTests {
         System.out.println("pricesSortedExpected: " + pricesSortedExpected);
 
         Assert.assertEquals(pricesSortedActual, pricesSortedExpected);
-    }
-
-    @AfterClass
-    public void tearDown() {
-        driver.quit();
     }
 }

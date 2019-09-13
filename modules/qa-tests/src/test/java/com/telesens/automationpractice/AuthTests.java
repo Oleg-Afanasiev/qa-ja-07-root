@@ -1,5 +1,6 @@
 package com.telesens.automationpractice;
 
+import com.telesens.framework.test.BaseTest;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -24,14 +25,12 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.testng.Assert.fail;
 
-public class AuthTests {
+public class AuthTests extends BaseTest {
     private static final String DEFAULT_PATH = "src/main/resources/automationpractice.properties";
-    private WebDriver driver;
     private String baseUrl;
 
-    @Parameters({"browser"})
     @BeforeClass(alwaysRun = true)
-    public void setUp(@Optional("chrome") String browser) throws Exception {
+    public void setUp() throws Exception {
         String automationPracticePath = System.getProperty("cfgAP");
         if (automationPracticePath == null)
             automationPracticePath = DEFAULT_PATH;
@@ -39,15 +38,9 @@ public class AuthTests {
         Properties prop = new Properties();
         prop.load(new FileReader(automationPracticePath));
         baseUrl = prop.getProperty("base.url");
-        System.setProperty("webdriver.chrome.driver", "d:/distribs/selenium/chromedriver.exe");
-        System.setProperty("webdriver.gecko.driver", "d:/distribs/selenium/geckodriver.exe");
-//        driver = new ChromeDriver();
-        driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
     }
 
-    @Test
+    @Test(enabled = false)
     public void testAuthSuccess() throws Exception {
         driver.get(baseUrl);
         driver.findElement(By.linkText("Sign in")).click();
@@ -137,11 +130,6 @@ public class AuthTests {
                 .toString().equals("complete");
 
         return wait.until(jQueryLoad) && wait.until(jsLoad);
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void tearDown() throws Exception {
-        driver.quit();
     }
 
     @DataProvider(name="authErrorMessageProvider")
