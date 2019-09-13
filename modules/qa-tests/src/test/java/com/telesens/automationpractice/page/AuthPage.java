@@ -40,7 +40,7 @@ public class AuthPage extends BasePage {
         return this;
     }
 
-    public BasePage presSubmit(){
+    public BasePage pressSubmit(){
         submitButton.click();
         return this;
     }

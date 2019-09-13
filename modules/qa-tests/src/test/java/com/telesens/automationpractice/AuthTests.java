@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.util.*;
 
 import static com.telesens.automationpractice.page.HomePage.startFromHome;
-import static com.telesens.framework.page.BasePage.start;
 import static org.testng.Assert.fail;
 
 public class AuthTests extends BaseTest {
@@ -71,7 +70,7 @@ public class AuthTests extends BaseTest {
                 .clickSignIn()
                 .enterEmail(login)
                 .enterPassword(passw)
-                .presSubmit();
+                .pressSubmit();
 
         String actualError = ((AuthPage) basePage).getErrorMessage();
 
