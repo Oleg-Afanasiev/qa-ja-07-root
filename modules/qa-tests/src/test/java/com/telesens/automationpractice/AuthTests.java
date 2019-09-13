@@ -1,28 +1,21 @@
 package com.telesens.automationpractice;
 
+import com.telesens.automationpractice.page.AuthPage;
+import com.telesens.framework.page.BasePage;
 import com.telesens.framework.test.BaseTest;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import org.testng.annotations.Optional;
 
 import java.io.FileReader;
-import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static org.openqa.selenium.support.ui.ExpectedConditions.not;
-import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
+import static com.telesens.automationpractice.page.HomePage.startFromHome;
+import static com.telesens.framework.page.BasePage.start;
 import static org.testng.Assert.fail;
 
 public class AuthTests extends BaseTest {
@@ -58,21 +51,49 @@ public class AuthTests extends BaseTest {
 
 
     @Test(dataProvider = "authErrorMessageProvider")
-    public void testAuthErrorMessage(String login, String passw, String errMsg) {
-        driver.get(baseUrl);
-        driver.findElement( By.linkText("Sign in")).click();
-        driver.findElement(By.id("email")).click();
-        driver.findElement(By.id("email")).clear();
-        driver.findElement(By.id("email")).sendKeys(login);
-        driver.findElement(By.id("passwd")).click();
-        driver.findElement(By.id("passwd")).clear();
-        driver.findElement(By.id("passwd")).sendKeys(passw);
-        driver.findElement(By.id("SubmitLogin")).click();
+    public void testAuthErrorMessage(String login, String passw, String expectedError) {
+        // driver.get(baseUrl);
+
+        // 1) Способ - длинный
+//        BasePage basePage = new BasePage(driver);
+//        HomePage homePage = basePage.goToHome(baseUrl);
+//        AuthPage authPage = homePage.clickSignIn();
+//        authPage.enterEmail(login);
+//        authPage.enterPassword(passw);
+//        authPage.presSubmit();
+//        String actualError = authPage.getErrorMessage();
+//        Assert.assertEquals(actualError, errMsg);
+
+        // 2) Способ - компактный
+//        String actualError =
+
+        BasePage basePage = startFromHome(driver, baseUrl)
+                .clickSignIn()
+                .enterEmail(login)
+                .enterPassword(passw)
+                .presSubmit();
+
+        String actualError = ((AuthPage) basePage).getErrorMessage();
+
+        Assert.assertEquals(actualError, expectedError);
+
+
+        //driver.findElement( By.linkText("Sign in")).click();
+
+//        driver.findElement(By.id("email")).click();
+//        driver.findElement(By.id("email")).clear();
+//        driver.findElement(By.id("email")).sendKeys(login);
+
+//        driver.findElement(By.id("passwd")).click();
+//        driver.findElement(By.id("passwd")).clear();
+//        driver.findElement(By.id("passwd")).sendKeys(passw);
+
+//        driver.findElement(By.id("SubmitLogin")).click();
         ////*[@id="center_column"]/div[1]/ol/li
-        WebElement errorMsg = driver.findElement(By.xpath("//*[@id=\"center_column\"]/div[1]/ol/li"));
-        String actualError = errorMsg.getText();
+
+ //       WebElement errorMsg = driver.findElement(By.xpath("//*[@id=\"center_column\"]/div[1]/ol/li"));
+
 //        System.out.println(message2);
-        Assert.assertEquals(actualError, errMsg);
     }
 
     @Test

@@ -8,10 +8,10 @@
             <class name="com.telesens.automationpractice.AuthTests" />
         </classes>
     </test>
-    <test name="login-firefox">
-        <parameter name="browser" value="firefox" />
-        <classes>
-            <class name="com.telesens.automationpractice.AuthTests" />
-        </classes>
-    </test>
+<!--    <test name="login-firefox">-->
+<!--        <parameter name="browser" value="firefox" />-->
+<!--        <classes>-->
+<!--            <class name="com.telesens.automationpractice.AuthTests" />-->
+<!--        </classes>-->
+<!--    </test>-->
 </suite>
